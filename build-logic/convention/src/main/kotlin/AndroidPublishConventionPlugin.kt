@@ -18,7 +18,7 @@ class AndroidPublishConventionPlugin : Plugin<Project> {
 
             extensions.configure<PublishingExtension> {
                 publications {
-                    create<MavenPublication>("release") {
+                    create<MavenPublication>("mavenRelease") {
                         groupId = "com.skybound.space"
                         artifactId = project.name
                         version = coreVersion
@@ -31,8 +31,12 @@ class AndroidPublishConventionPlugin : Plugin<Project> {
 
             afterEvaluate {
                 extensions.configure<PublishingExtension> {
-                    publications.named<MavenPublication>("release") {
-                        val componentName = if (components.names.contains("release")) "release" else "javaPlatform"
+                    publications.named<MavenPublication>("mavenRelease") {
+                        val componentName = if (pluginManager.hasPlugin("java-platform")) {
+                            "javaPlatform"
+                        } else {
+                            "release"
+                        }
                         from(components.getByName(componentName))
                     }
                 }
