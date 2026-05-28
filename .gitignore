@@ -1,0 +1,16 @@
+# Gradle
+.gradle/
+build/
+**/build/
+*.class
+
+# Local
+local.properties
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Maven Local output (don't commit published artifacts)
+repo/
