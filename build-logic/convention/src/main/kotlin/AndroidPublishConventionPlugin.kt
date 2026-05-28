@@ -32,7 +32,8 @@ class AndroidPublishConventionPlugin : Plugin<Project> {
             afterEvaluate {
                 extensions.configure<PublishingExtension> {
                     publications.named<MavenPublication>("release") {
-                        from(components["release"])
+                        val componentName = if (components.names.contains("release")) "release" else "javaPlatform"
+                        from(components.getByName(componentName))
                     }
                 }
             }
