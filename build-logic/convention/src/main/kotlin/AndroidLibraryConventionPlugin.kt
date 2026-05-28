@@ -19,7 +19,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 defaultConfig {
                     minSdk = 26
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                    consumerProguardFiles("consumer-rules.pro")
                 }
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_17
@@ -33,11 +32,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
 
             tasks.withType<KotlinCompile>().configureEach {
-                kotlinOptions {
-                    jvmTarget = "17"
-                    freeCompilerArgs += listOf(
-                        "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-                    )
+                compilerOptions {
+                    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                    optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
                 }
             }
         }

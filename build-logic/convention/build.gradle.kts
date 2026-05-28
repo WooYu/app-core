@@ -2,8 +2,6 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.skybound.space.buildlogic"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
