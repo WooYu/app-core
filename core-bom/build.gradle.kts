@@ -8,12 +8,14 @@ javaPlatform {
     allowDependencies()
 }
 
+val versionCatalog = extensions.getByType<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
+val appCoreVersion = versionCatalog.findVersion("app-core").get().requiredVersion
+
 dependencies {
     constraints {
-        val version = "1.0.0" // TODO: Replace with libs.versions.appCore.get() once version catalog accessor is available
-        api("com.skybound.space:core-base:$version")
-        api("com.skybound.space:core-foundation:$version")
-        api("com.skybound.space:core-domain:$version")
-        api("com.skybound.space:core-data:$version")
+        api("com.skybound.space:core-base:$appCoreVersion")
+        api("com.skybound.space:core-foundation:$appCoreVersion")
+        api("com.skybound.space:core-domain:$appCoreVersion")
+        api("com.skybound.space:core-data:$appCoreVersion")
     }
 }
