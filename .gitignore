@@ -14,3 +14,7 @@ local.properties
 
 # Maven Local output (don't commit published artifacts)
 repo/
+
+# Signing keystores
+*.keystore
+*.jks
