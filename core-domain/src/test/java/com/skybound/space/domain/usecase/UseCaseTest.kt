@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class UseCaseTest {
@@ -48,7 +47,17 @@ class UseCaseTest {
     @Test
     fun `UseCase returns Failure`() = runTest {
         val result = FailingUseCase()(Unit)
-        assertTrue(result is AppResult.Failure)
+        assertEquals(AppResult.Failure(AppError.Unknown), result)
+    }
+
+    @Test
+    fun `UseCase wraps thrown exception as Failure`() = runTest {
+        val ex = RuntimeException("boom")
+        val throwingUseCase = object : UseCase<Unit, String>(testDispatchers) {
+            override suspend fun execute(params: Unit): AppResult<String> = throw ex
+        }
+        val result = throwingUseCase(Unit)
+        assertEquals(AppResult.Failure(AppError.Local(ex)), result)
     }
 
     @Test
