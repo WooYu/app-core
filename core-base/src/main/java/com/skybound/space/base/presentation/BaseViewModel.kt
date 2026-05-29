@@ -17,10 +17,19 @@ abstract class BaseViewModel<S : UiState, E : UiEvent>(
     private val _eventDispatcher = UiEventDispatcher<E>()
     val events: Flow<E> = _eventDispatcher.flow
 
+    /**
+     * Atomically updates the UI state by applying [reducer] to the current value.
+     *
+     * Usage: `updateState { copy(isLoading = true) }`
+     */
     protected fun updateState(reducer: S.() -> S) {
         _uiState.update(reducer)
     }
 
+    /**
+     * Enqueues a one-shot [event] for delivery to the UI layer.
+     * Events are buffered until collected — they are never dropped.
+     */
     protected fun sendEvent(event: E) {
         _eventDispatcher.send(event)
     }
