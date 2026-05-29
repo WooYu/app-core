@@ -13,15 +13,17 @@ abstract class BaseRemoteDataSource {
         call: suspend () -> BaseResponse<T>
     ): AppResult<T> = try {
         val response = call()
-        if (response.isSuccess && response.data != null) {
-            AppResult.Success(response.data!!)
+        val data = response.data
+        if (response.isSuccess && data != null) {
+            AppResult.Success(data)
         } else {
             AppResult.Failure(AppError.Server(response.code, response.message))
         }
     } catch (e: CancellationException) {
         throw e
     } catch (e: HttpException) {
-        AppResult.Failure(AppError.Network(e.code(), e.message()))
+        if (e.code() == 401) AppResult.Failure(AppError.Unauthorized)
+        else AppResult.Failure(AppError.Network(e.code(), e.message()))
     } catch (e: IOException) {
         AppResult.Failure(AppError.Local(e))
     }

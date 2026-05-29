@@ -13,8 +13,9 @@ abstract class BaseRepository {
         call: suspend () -> BaseResponse<T>
     ): AppResult<T> = try {
         val response = call()
-        if (response.isSuccess && response.data != null) {
-            AppResult.Success(response.data!!)
+        val data = response.data
+        if (response.isSuccess && data != null) {
+            AppResult.Success(data)
         } else {
             AppResult.Failure(AppError.Server(response.code, response.message))
         }

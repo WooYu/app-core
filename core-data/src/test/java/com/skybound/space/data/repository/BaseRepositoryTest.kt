@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -44,6 +45,14 @@ class BaseRepositoryTest {
         }
         assertTrue(result is AppResult.Failure)
         assertTrue((result as AppResult.Failure).error is AppError.Local)
+    }
+
+    @Test
+    fun `safeApiCall returns Unauthorized on HttpException 401`() = runTest {
+        val result = repo.callApi<String> {
+            throw HttpException(Response.error<String>(401, "".toResponseBody()))
+        }
+        assertEquals(AppResult.Failure(AppError.Unauthorized), result)
     }
 
     @Test
