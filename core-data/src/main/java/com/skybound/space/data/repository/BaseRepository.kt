@@ -1,0 +1,41 @@
+package com.skybound.space.data.repository
+
+import com.skybound.space.base.result.AppError
+import com.skybound.space.base.result.AppResult
+import com.skybound.space.core.network.BaseResponse
+import kotlinx.coroutines.CancellationException
+import retrofit2.HttpException
+import java.io.IOException
+
+abstract class BaseRepository {
+
+    protected suspend fun <T> safeApiCall(
+        call: suspend () -> BaseResponse<T>
+    ): AppResult<T> = try {
+        val response = call()
+        if (response.isSuccess && response.data != null) {
+            AppResult.Success(response.data!!)
+        } else {
+            AppResult.Failure(AppError.Server(response.code, response.message))
+        }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: HttpException) {
+        if (e.code() == 401) AppResult.Failure(AppError.Unauthorized)
+        else AppResult.Failure(AppError.Network(e.code(), e.message()))
+    } catch (e: IOException) {
+        AppResult.Failure(AppError.Local(e))
+    } catch (e: Exception) {
+        AppResult.Failure(AppError.Local(e))
+    }
+
+    protected suspend fun <T> safeDbCall(
+        call: suspend () -> T
+    ): AppResult<T> = try {
+        AppResult.Success(call())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        AppResult.Failure(AppError.Local(e))
+    }
+}
