@@ -24,8 +24,8 @@ abstract class BasePagingSource<T : Any> : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
         return state.anchorPosition?.let { anchor ->
-            state.closestPageToPosition(anchor)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchor)?.nextKey?.minus(1)
+            val page = state.closestPageToPosition(anchor)
+            page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1)
         }
     }
 
